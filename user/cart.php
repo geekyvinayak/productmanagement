@@ -1,8 +1,11 @@
 <?php
-include './config.php';
-$res = $product->getdata();
-?>
 
+require 'verify.php';
+include '../config.php';
+
+session_start();
+// echo $_SESSION["user"];
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -67,10 +70,10 @@ $res = $product->getdata();
                         if (!$_SESSION["user"] == 'true') {
                             echo '<a href="./user/login.php" class="btn btn-success pull-right me-2"><i class="fa fa-user"></i> USER LOGIN</a>';
                         } else {
-                            echo  '<a href="./user/logout.php" class="btn btn-warning pull-right me-2"><i class="fa fa-sign-out"></i> USER LOGOUT</a>';
+                            echo  '<a href="../user/logout.php" class="btn btn-warning pull-right me-2"><i class="fa fa-sign-out"></i> USER LOGOUT</a>';
                         } ?>
                     </div>
-                    <div><?php echo  $NAME ?> <a href="user/cart.php"><button>CART</button></a></div>
+                    <div><?php echo  $NAME ?></div>
                 </div>
             </div>
         </div>
@@ -81,13 +84,13 @@ $res = $product->getdata();
         <div class='row'>
 
             <?php
-            $result = $product->getdata();
+            $result = $product->getcart($_SESSION["user"]);
             if ($result) {
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_array($result)) { ?>
                         <div class='col-md-4'>
                             <div class="card">
-                                <img src="./images/<?= $row['image'] ?>" class="card-img-top text-center" alt="./images/<?= $row['image'] ?>">
+                                <img src="../images/<?= $row['image'] ?>" class="card-img-top text-center" alt="./images/<?= $row['image'] ?>">
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <?= $row['name'] ?>
@@ -97,13 +100,12 @@ $res = $product->getdata();
                                     </h5>
                                     <p>
                                     <h5>
-                                        <?= $row['brand_name'] ?>
+                                        Quantity: <?= $row['qty'] ?>
                                     </h5>
                                     </p>
                                     <p class="card-text">
                                         <?= $row['description'] ?>
                                     </p>
-                                    <button onclick="addtocart(<?= $row['id'] ?>)">ADD to cart</button>
                                 </div>
                             </div>
                         </div>
@@ -114,22 +116,5 @@ $res = $product->getdata();
     </div>
 
 </body>
-<script src="https://code.jquery.com/jquery-3.6.4.slim.min.js" integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" crossorigin="anonymous"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script>
-function addtocart(id){
-    $.ajax({
-        url: "./user/insertproduct.php",
-        method: "post",
-        data: {id},
-        success: function(response){
-            console.log(response);
-            if(response==1){
-            alert("added to cart");
-        }}
 
-    })
-}
-
-</script>
 </html>
